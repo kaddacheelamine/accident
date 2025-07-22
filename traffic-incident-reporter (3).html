@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الإبلاغ عن حوادث المرور</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .floating-animation {
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .pulse-bg {
+            animation: pulse-bg 2s ease-in-out infinite;
+        }
+        @keyframes pulse-bg {
+            0%, 100% { background-color: rgb(59 130 246); }
+            50% { background-color: rgb(37 99 235); }
+        }
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        .success-animation {
+            animation: successPulse 0.6s ease-in-out;
+        }
+        select {
+            background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="white" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: left 1rem center;
+            background-size: 0.75rem;
+            padding-left: 3rem;
+        }
+        
+        /* Fix dropdown styling */
+        select option {
+            background-color: #1f2937;
+            color: white;
+            padding: 10px;
+        }
+        
+        select option:hover {
+            background-color: #374151;
+            color: white;
+        }
+        
+        select option:checked,
+        select option:focus {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        /* Ensure select dropdown has proper styling */
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        @keyframes successPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen p-4">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <div class="floating-animation inline-block">
+            <i class="fas fa-car-crash text-6xl text-white mb-4 drop-shadow-lg"></i>
+        </div>
+        <h1 class="text-3xl font-bold text-white mb-2 drop-shadow-lg">الإبلاغ عن حوادث المرور</h1>
+        <p class="text-white/80 text-lg">ساعد في تحسين الأمان المروري بالإبلاغ السريع</p>
+    </div>
+
+    <!-- Main Form Container -->
+    <div class="max-w-md mx-auto">
+        <div class="glass-effect rounded-3xl p-6 shadow-2xl">
+            <form id="incidentForm" class="space-y-6">
+                <!-- Name Field -->
+                <div class="relative">
+                    <label class="block text-white font-semibold mb-2 text-right">
+                        <i class="fas fa-user ml-2"></i>
+                        الاسم الكامل
+                    </label>
+                    <input type="text" id="fullName" required 
+                           class="w-full p-4 rounded-2xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:ring-4 focus:ring-blue-300/50 focus:border-white/50 transition-all duration-300 text-right"
+                           placeholder="أدخل اسمك الكامل">
+                </div>
+
+                <!-- Phone Field -->
+                <div class="relative">
+                    <label class="block text-white font-semibold mb-2 text-right">
+                        <i class="fas fa-phone ml-2"></i>
+                        رقم الهاتف
+                    </label>
+                    <input type="tel" id="phoneNumber" required 
+                           class="w-full p-4 rounded-2xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:ring-4 focus:ring-blue-300/50 focus:border-white/50 transition-all duration-300 text-right"
+                           placeholder="05xxxxxxxx">
+                </div>
+
+                <!-- Incident Type -->
+                <div class="relative">
+                    <label class="block text-white font-semibold mb-2 text-right">
+                        <i class="fas fa-exclamation-triangle ml-2"></i>
+                        نوع الحادث
+                    </label>
+                    <select id="incidentType" required onchange="handleIncidentTypeChange()"
+                            class="w-full p-4 rounded-2xl bg-white/20 border border-white/30 text-white focus:ring-4 focus:ring-blue-300/50 focus:border-white/50 transition-all duration-300 text-right appearance-none">
+                        <option value="" class="bg-gray-800 text-white">اختر نوع الحادث</option>
+                        <option value="collision" class="bg-gray-800 text-white">اصطدام بين مركبتين أو أكثر</option>
+                        <option value="single_vehicle" class="bg-gray-800 text-white">حادث مركبة واحدة</option>
+                        <option value="pedestrian" class="bg-gray-800 text-white">دهس مشاة</option>
+                        <option value="rollover" class="bg-gray-800 text-white">انقلاب مركبة</option>
+                        <option value="fire" class="bg-gray-800 text-white">حريق مركبة</option>
+                        <option value="breakdown" class="bg-gray-800 text-white">عطل مروري</option>
+                        <option value="other" class="bg-gray-800 text-white">أخرى</option>
+                    </select>
+                </div>
+
+                <!-- Vehicle Types (shown for collision/single vehicle) -->
+                <div id="vehicleTypesSection" class="relative hidden">
+                    <label class="block text-white font-semibold mb-2 text-right">
+                        <i class="fas fa-car ml-2"></i>
+                        نوع المركبات المتضررة
+                    </label>
+                    
+                    <!-- First Vehicle -->
+                    <div class="mb-3">
+                        <label class="block text-white/80 text-sm mb-1 text-right">المركبة الأولى</label>
+                        <select id="vehicle1Type" required
+                                class="w-full p-3 rounded-xl bg-white/20 border border-white/30 text-white focus:ring-2 focus:ring-blue-300/50 text-right text-sm appearance-none">
+                            <option value="" class="bg-gray-800 text-white">اختر نوع المركبة</option>
+                            <option value="small_car" class="bg-gray-800 text-white">سيارة صغيرة</option>
+                            <option value="family_car" class="bg-gray-800 text-white">سيارة عائلية</option>
+                            <option value="suv" class="bg-gray-800 text-white">سيارة دفع رباعي</option>
+                            <option value="pickup" class="bg-gray-800 text-white">بيك أب</option>
+                            <option value="medium_truck" class="bg-gray-800 text-white">شاحنة متوسطة</option>
+                            <option value="large_truck" class="bg-gray-800 text-white">شاحنة كبيرة</option>
+                            <option value="bus" class="bg-gray-800 text-white">حافلة</option>
+                            <option value="minibus" class="bg-gray-800 text-white">حافلة صغيرة</option>
+                            <option value="motorcycle" class="bg-gray-800 text-white">دراجة نارية</option>
+                            <option value="bicycle" class="bg-gray-800 text-white">دراجة هوائية</option>
+                        </select>
+                    </div>
+
+                    <!-- Second Vehicle (for collision) -->
+                    <div id="vehicle2Section" class="mb-3 hidden">
+                        <label class="block text-white/80 text-sm mb-1 text-right">المركبة الثانية</label>
+                        <select id="vehicle2Type"
+                                class="w-full p-3 rounded-xl bg-white/20 border border-white/30 text-white focus:ring-2 focus:ring-blue-300/50 text-right text-sm appearance-none">
+                            <option value="" class="bg-gray-800 text-white">اختر نوع المركبة</option>
+                            <option value="small_car" class="bg-gray-800 text-white">سيارة صغيرة</option>
+                            <option value="family_car" class="bg-gray-800 text-white">سيارة عائلية</option>
+                            <option value="suv" class="bg-gray-800 text-white">سيارة دفع رباعي</option>
+                            <option value="pickup" class="bg-gray-800 text-white">بيك أب</option>
+                            <option value="medium_truck" class="bg-gray-800 text-white">شاحنة متوسطة</option>
+                            <option value="large_truck" class="bg-gray-800 text-white">شاحنة كبيرة</option>
+                            <option value="bus" class="bg-gray-800 text-white">حافلة</option>
+                            <option value="minibus" class="bg-gray-800 text-white">حافلة صغيرة</option>
+                            <option value="motorcycle" class="bg-gray-800 text-white">دراجة نارية</option>
+                            <option value="bicycle" class="bg-gray-800 text-white">دراجة هوائية</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Reporter Type -->
+                <div class="relative">
+                    <label class="block text-white font-semibold mb-2 text-right">
+                        <i class="fas fa-user-check ml-2"></i>
+                        صفة المبلغ
+                    </label>
+                    <select id="reporterType" required
+                            class="w-full p-4 rounded-2xl bg-white/20 border border-white/30 text-white focus:ring-4 focus:ring-blue-300/50 focus:border-white/50 transition-all duration-300 text-right appearance-none">
+                        <option value="" class="bg-gray-800 text-white">اختر صفة المبلغ</option>
+                        <option value="involved" class="bg-gray-800 text-white">طرف في الحادث</option>
+                        <option value="witness" class="bg-gray-800 text-white">شاهد عيان</option>
+                        <option value="passerby" class="bg-gray-800 text-white">مارّ في المكان</option>
+                        <option value="emergency" class="bg-gray-800 text-white">عضو في فرق الطوارئ</option>
+                    </select>
+                </div>
+
+                <!-- Injuries Section -->
+                <div class="relative">
+                    <label class="block text-white font-semibold mb-2 text-right">
+                        <i class="fas fa-heart-pulse ml-2"></i>
+                        حالة الإصابات
+                    </label>
+                    <select id="injuryLevel" required
+                            class="w-full p-4 rounded-2xl bg-white/20 border border-white/30 text-white focus:ring-4 focus:ring-blue-300/50 focus:border-white/50 transition-all duration-300 text-right appearance-none">
+                        <option value="" class="bg-gray-800 text-white">اختر حالة الإصابات</option>
+                        <option value="none" class="bg-gray-800 text-white">لا توجد إصابات (أضرار مادية فقط)</option>
+                        <option value="minor" class="bg-gray-800 text-white">إصابات طفيفة (خدوش، كدمات)</option>
+                        <option value="moderate" class="bg-gray-800 text-white">إصابات متوسطة (تحتاج عناية طبية)</option>
+                        <option value="severe" class="bg-gray-800 text-white">إصابات خطيرة (تحتاج إسعاف فوري)</option>
+                        <option value="critical" class="bg-gray-800 text-white">إصابات حرجة أو وفيات</option>
+                        <option value="unknown" class="bg-gray-800 text-white">غير معروف</option>
+                    </select>
+                </div>
+
+                <!-- Emergency Services -->
+                <div class="relative">
+                    <label class="block text-white font-semibold mb-2 text-right">
+                        <i class="fas fa-ambulance ml-2"></i>
+                        حالة خدمات الطوارئ
+                    </label>
+                    <select id="emergencyStatus" required
+                            class="w-full p-4 rounded-2xl bg-white/20 border border-white/30 text-white focus:ring-4 focus:ring-blue-300/50 focus:border-white/50 transition-all duration-300 text-right appearance-none">
+                        <option value="" class="bg-gray-800 text-white">اختر حالة الطوارئ</option>
+                        <option value="not_needed" class="bg-gray-800 text-white">لا حاجة لخدمات الطوارئ</option>
+                        <option value="requested" class="bg-gray-800 text-white">تم طلب الطوارئ</option>
+                        <option value="arrived" class="bg-gray-800 text-white">وصلت خدمات الطوارئ</option>
+                        <option value="needed_not_called" class="bg-gray-800 text-white">مطلوبة ولم يتم الاتصال</option>
+                    </select>
+                </div>
+
+                <!-- Additional Details (Optional) -->
+                <div class="relative">
+                    <label class="block text-white font-semibold mb-2 text-right">
+                        <i class="fas fa-edit ml-2"></i>
+                        تفاصيل إضافية (اختياري)
+                    </label>
+                    <textarea id="additionalDetails" rows="3"
+                              class="w-full p-4 rounded-2xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:ring-4 focus:ring-blue-300/50 focus:border-white/50 transition-all duration-300 resize-none text-right"
+                              placeholder="أضف أي تفاصيل إضافية مهمة..."></textarea>
+                </div>
+
+                <!-- Image Upload -->
+                <div class="relative">
+                    <label class="block text-white font-semibold mb-2 text-right">
+                        <i class="fas fa-camera ml-2"></i>
+                        صورة الحادث
+                    </label>
+                    <div class="flex gap-2">
+                        <input type="file" id="imageUpload" accept="image/*" class="hidden">
+                        <button type="button" onclick="document.getElementById('imageUpload').click()"
+                                class="flex-1 p-4 rounded-2xl bg-white/20 border border-white/30 text-white hover:bg-white/30 transition-all duration-300 flex items-center justify-center gap-2">
+                            <i class="fas fa-upload"></i>
+                            <span>رفع صورة</span>
+                        </button>
+                        <button type="button" onclick="captureImage()"
+                                class="flex-1 p-4 rounded-2xl bg-white/20 border border-white/30 text-white hover:bg-white/30 transition-all duration-300 flex items-center justify-center gap-2">
+                            <i class="fas fa-camera"></i>
+                            <span>التقاط صورة</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Image Preview -->
+                    <div id="imagePreview" class="mt-4 text-center hidden">
+                        <img id="previewImg" class="image-preview mx-auto shadow-lg">
+                        <button type="button" onclick="removeImage()" 
+                                class="mt-2 text-red-300 hover:text-red-100 transition-colors">
+                            <i class="fas fa-trash ml-1"></i>
+                            حذف الصورة
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Location Status -->
+                <div class="relative">
+                    <label class="block text-white font-semibold mb-2 text-right">
+                        <i class="fas fa-map-marker-alt ml-2"></i>
+                        الموقع الجغرافي
+                    </label>
+                    <div id="locationStatus" class="p-4 rounded-2xl bg-white/20 border border-white/30 text-right">
+                        <div id="locationLoading" class="flex items-center justify-center gap-2 text-white">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span>جاري تحديد الموقع...</span>
+                        </div>
+                        <div id="locationSuccess" class="hidden text-green-200">
+                            <i class="fas fa-check-circle ml-1"></i>
+                            تم تحديد الموقع بنجاح
+                        </div>
+                        <div id="locationError" class="hidden text-red-300">
+                            <i class="fas fa-exclamation-triangle ml-1"></i>
+                            لم يتم تحديد الموقع
+                            <button type="button" onclick="requestLocation()" 
+                                    class="block mt-2 text-blue-200 hover:text-blue-100 underline">
+                                إعادة المحاولة
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="submitBtn"
+                        class="w-full p-4 rounded-2xl bg-green-600 hover:bg-green-700 text-white font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    <i class="fas fa-paper-plane ml-2"></i>
+                    إرسال التقرير
+                </button>
+            </form>
+        </div>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="hidden mt-6 p-6 bg-green-500 rounded-3xl text-white text-center glass-effect">
+            <i class="fas fa-check-circle text-4xl mb-4 success-animation inline-block"></i>
+            <h2 class="text-xl font-bold mb-2">تم إرسال التقرير بنجاح!</h2>
+            <p class="text-green-100">شكراً لك على المساهمة في تحسين الأمان المروري</p>
+            <button onclick="resetForm()" 
+                    class="mt-4 px-6 py-2 bg-white/20 rounded-full hover:bg-white/30 transition-all duration-300">
+                إرسال تقرير جديد
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentLocation = null;
+        let capturedImage = null;
+
+        // Initialize location on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            requestLocation();
+            
+            // Handle file upload
+            document.getElementById('imageUpload').addEventListener('change', handleFileUpload);
+            
+            // Handle form submission
+            document.getElementById('incidentForm').addEventListener('submit', handleSubmit);
+        });
+
+        function requestLocation() {
+            const locationLoading = document.getElementById('locationLoading');
+            const locationSuccess = document.getElementById('locationSuccess');
+            const locationError = document.getElementById('locationError');
+            
+            locationLoading.classList.remove('hidden');
+            locationSuccess.classList.add('hidden');
+            locationError.classList.add('hidden');
+            
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        currentLocation = {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            accuracy: position.coords.accuracy
+                        };
+                        locationLoading.classList.add('hidden');
+                        locationSuccess.classList.remove('hidden');
+                    },
+                    function(error) {
+                        console.error('Location error:', error);
+                        locationLoading.classList.add('hidden');
+                        locationError.classList.remove('hidden');
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 300000
+                    }
+                );
+            } else {
+                locationLoading.classList.add('hidden');
+                locationError.classList.remove('hidden');
+            }
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    displayImagePreview(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function captureImage() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.capture = 'environment';
+            
+            input.onchange = function(event) {
+                handleFileUpload(event);
+            };
+            
+            input.click();
+        }
+
+        function displayImagePreview(src) {
+            const preview = document.getElementById('imagePreview');
+            const img = document.getElementById('previewImg');
+            
+            img.src = src;
+            preview.classList.remove('hidden');
+            capturedImage = src;
+        }
+
+        function removeImage() {
+            const preview = document.getElementById('imagePreview');
+            const input = document.getElementById('imageUpload');
+            
+            preview.classList.add('hidden');
+            input.value = '';
+            capturedImage = null;
+        }
+
+        function handleIncidentTypeChange() {
+            const incidentType = document.getElementById('incidentType').value;
+            const vehicleTypesSection = document.getElementById('vehicleTypesSection');
+            const vehicle2Section = document.getElementById('vehicle2Section');
+            const vehicle1Type = document.getElementById('vehicle1Type');
+            const vehicle2Type = document.getElementById('vehicle2Type');
+            
+            if (incidentType === 'collision' || incidentType === 'single_vehicle') {
+                vehicleTypesSection.classList.remove('hidden');
+                vehicle1Type.required = true;
+                
+                if (incidentType === 'collision') {
+                    vehicle2Section.classList.remove('hidden');
+                    vehicle2Type.required = true;
+                } else {
+                    vehicle2Section.classList.add('hidden');
+                    vehicle2Type.required = false;
+                    vehicle2Type.value = '';
+                }
+            } else {
+                vehicleTypesSection.classList.add('hidden');
+                vehicle1Type.required = false;
+                vehicle2Type.required = false;
+                vehicle1Type.value = '';
+                vehicle2Type.value = '';
+            }
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            
+            // Show loading state
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin ml-2"></i>جاري الإرسال...';
+            submitBtn.disabled = true;
+            
+            // Collect form data
+            const formData = {
+                personalInfo: {
+                    fullName: document.getElementById('fullName').value,
+                    phoneNumber: document.getElementById('phoneNumber').value,
+                    reporterType: document.getElementById('reporterType').value
+                },
+                incidentDetails: {
+                    type: document.getElementById('incidentType').value,
+                    vehicle1Type: document.getElementById('vehicle1Type').value,
+                    vehicle2Type: document.getElementById('vehicle2Type').value,
+                    injuryLevel: document.getElementById('injuryLevel').value,
+                    emergencyStatus: document.getElementById('emergencyStatus').value,
+                    additionalDetails: document.getElementById('additionalDetails').value
+                },
+                location: currentLocation,
+                image: capturedImage,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Simulate API call
+            setTimeout(() => {
+                console.log('Report submitted:', formData);
+                showSuccessMessage();
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 2000);
+        }
+
+        function showSuccessMessage() {
+            document.getElementById('incidentForm').parentElement.style.display = 'none';
+            document.getElementById('successMessage').classList.remove('hidden');
+        }
+
+        function resetForm() {
+            document.getElementById('incidentForm').reset();
+            removeImage();
+            document.getElementById('incidentForm').parentElement.style.display = 'block';
+            document.getElementById('successMessage').classList.add('hidden');
+            requestLocation();
+        }
+
+        // Add some nice touch interactions for mobile
+        document.querySelectorAll('input, textarea, button').forEach(element => {
+            element.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.98)';
+            });
+            
+            element.addEventListener('touchend', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
